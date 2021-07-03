@@ -1,24 +1,39 @@
 const http = require('http');
+const fs = require('fs');
 
 http
   .createServer(function (req, res) {
     const url = req.url;
+    let content = null;
+
     switch (url) {
       case '/':
-        load('./index.html');
+      case '/index.html':
+        content = load('./html/index.html');
         break;
-      case '/contact':
-        load('./contact.html');
+      case '/contact-me.html':
+        content = load('./html/contact-me.html');
         break;
-      case '/about-me':
-        load('./about-me.html');
+      case '/about.html':
+        content = load('./html/about.html');
         break;
       default:
-        load('./404.html');
+        content = load('./html/404.html');
         break;
     }
-    function load(url) {
-        
+    console.log(url);
+    return content;
+
+    function load(file) {
+      fs.readFile(file, function (err, data) {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.write(data);
+        return res.end();
+      });
     }
   })
   .listen(8080);
