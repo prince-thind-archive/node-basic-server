@@ -16,6 +16,10 @@ app.get('/contact-me', (req, res) => {
   const content = load('./contact-me.html');
   res.send(content);
 });
+app.get(/.*/, (req, res) => {
+  const content = load('./404.html');
+  res.send(content);
+});
 
 app.listen(port, () => {
   console.log('listening on port:' + port);
@@ -25,17 +29,3 @@ function load(file) {
   const data = fs.readFileSync(file, { encoding: 'utf8', flag: 'r' });
   return data;
 }
-
-// function checkExistence(file) {
-//   let fileExist = false;
-//   switch (file) {
-//     case './index.html':
-//     case './about.html':
-//     case './contact-me.html':
-//       fileExist = true;
-//       break;
-//     default:
-//       fileExist = false;
-//   }
-//   return fileExist;
-// }
