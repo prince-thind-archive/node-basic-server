@@ -1,38 +1,38 @@
 const http = require('http');
 const fs = require('fs');
 
-http
-  .createServer(function (req, res) {
-    const url = req.url;
-    load('.' + url);
+const server = http.createServer(function (req, res) {
+  const url = req.url;
+  const html = getHtml(url);
 
-    function load(file) {
-      const fileExist = checkExistence(file);
-      if (!fileExist) file = './404.html';
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.write(html);
+  res.end();
+});
 
-      fs.readFile(file, function (err, data) {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.write(data);
-        res.end();
-      });
-    }
+server.listen(8080);
 
-    function checkExistence(file) {
-      let fileExist = false;
-      switch (file) {
-        case './index.html':
-        case './about.html':
-        case './contact-me.html':
-          fileExist = true;
-          break;
-        default:
-          fileExist = false;
-      }
-      return fileExist;
-    }
-  })
-  .listen(8080);
+function getHtml(url) {
+  console.log(url);
+  switch (url) {
+    case '/':
+    case '/index':
+      return getFile('index');
+    case '/about':
+      return getFile('about');
+    case '/contact':
+      return getFile('contact');
+    default:
+      return getFile('404');
+  }
+}
+
+function getFile(name) {
+  try {
+    const path = './' + name+'.html';
+    const data = fs.readFileSync(path, 'utf8');
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+}
